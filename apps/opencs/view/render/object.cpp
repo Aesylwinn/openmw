@@ -6,6 +6,7 @@
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
 
+#include <osg/ComputeBoundsVisitor>
 #include <osg/ShapeDrawable>
 #include <osg/Shape>
 #include <osg/Geode>
@@ -29,12 +30,11 @@
 
 #include "mask.hpp"
 
-
-const float CSVRender::Object::MarkerShaftWidth = 30;
-const float CSVRender::Object::MarkerShaftBaseLength = 70;
-const float CSVRender::Object::MarkerHeadWidth = 50;
-const float CSVRender::Object::MarkerHeadLength = 50;
-
+const float CSVRender::Object::MarkerStartOffsetFactor = 0.5f;
+const float CSVRender::Object::MarkerWidthFactor = 0.05f;
+const float CSVRender::Object::MarkerLengthFactor = 0.7f;
+const float CSVRender::Object::MarkerHeadWidthFactor = 0.1f;
+const float CSVRender::Object::MarkerHeadLengthFactor = 0.1f;
 
 namespace
 {
@@ -213,29 +213,35 @@ osg::ref_ptr<osg::Node> CSVRender::Object::makeMoveOrScaleMarker (int axis)
 {
     osg::ref_ptr<osg::Geometry> geometry (new osg::Geometry);
 
-    float shaftLength = MarkerShaftBaseLength + mBaseNode->getBound().radius();
+    float radius = mBaseNode->getBound().radius();
+
+    float startOffset = radius * MarkerStartOffsetFactor;
+    float shaftWidth = radius * MarkerWidthFactor;
+    float shaftLength = radius * MarkerLengthFactor;
+    float headWidth = radius * MarkerHeadWidthFactor;
+    float headLength = radius * MarkerHeadLengthFactor;
 
     // shaft
     osg::Vec3Array *vertices = new osg::Vec3Array;
 
     for (int i=0; i<2; ++i)
     {
-        float length = i ? shaftLength : 0;
+        float length = i ? shaftLength + startOffset : startOffset;
 
-        vertices->push_back (getMarkerPosition (-MarkerShaftWidth/2, -MarkerShaftWidth/2, length, axis));
-        vertices->push_back (getMarkerPosition (-MarkerShaftWidth/2, MarkerShaftWidth/2, length, axis));
-        vertices->push_back (getMarkerPosition (MarkerShaftWidth/2, MarkerShaftWidth/2, length, axis));
-        vertices->push_back (getMarkerPosition (MarkerShaftWidth/2, -MarkerShaftWidth/2, length, axis));
+        vertices->push_back (getMarkerPosition (-shaftWidth/2, -shaftWidth/2, length, axis));
+        vertices->push_back (getMarkerPosition (-shaftWidth/2,  shaftWidth/2, length, axis));
+        vertices->push_back (getMarkerPosition ( shaftWidth/2,  shaftWidth/2, length, axis));
+        vertices->push_back (getMarkerPosition ( shaftWidth/2, -shaftWidth/2, length, axis));
     }
 
     // head backside
-    vertices->push_back (getMarkerPosition (-MarkerHeadWidth/2, -MarkerHeadWidth/2, shaftLength, axis));
-    vertices->push_back (getMarkerPosition (-MarkerHeadWidth/2, MarkerHeadWidth/2, shaftLength, axis));
-    vertices->push_back (getMarkerPosition (MarkerHeadWidth/2, MarkerHeadWidth/2, shaftLength, axis));
-    vertices->push_back (getMarkerPosition (MarkerHeadWidth/2, -MarkerHeadWidth/2, shaftLength, axis));
+    vertices->push_back (getMarkerPosition (-headWidth/2, -headWidth/2, startOffset + shaftLength, axis));
+    vertices->push_back (getMarkerPosition (-headWidth/2,  headWidth/2, startOffset + shaftLength, axis));
+    vertices->push_back (getMarkerPosition ( headWidth/2,  headWidth/2, startOffset + shaftLength, axis));
+    vertices->push_back (getMarkerPosition ( headWidth/2, -headWidth/2, startOffset + shaftLength, axis));
 
     // head
-    vertices->push_back (getMarkerPosition (0, 0, shaftLength+MarkerHeadLength, axis));
+    vertices->push_back (getMarkerPosition (0, 0, startOffset + shaftLength + headLength, axis));
 
     geometry->setVertexArray (vertices);
 
@@ -305,11 +311,14 @@ osg::ref_ptr<osg::Node> CSVRender::Object::makeRotateMarker (int axis)
 {
     const float Pi = 3.14159265f;
 
-    const float InnerRadius = mBaseNode->getBound().radius();
-    const float OuterRadius = InnerRadius + MarkerShaftWidth;
+    const float BoundRadius = mBaseNode->getBound().radius();
+
+    const float Width = BoundRadius * MarkerWidthFactor;
+    const float InnerRadius = BoundRadius * (MarkerStartOffsetFactor + MarkerLengthFactor);
+    const float OuterRadius = InnerRadius + Width;
 
     const float SegmentDistance = 100.f;
-    const size_t SegmentCount = std::min(64, std::max(8, (int)(OuterRadius * 2 * Pi / SegmentDistance)));
+    const size_t SegmentCount = std::min(64, std::max(16, (int)(OuterRadius * 2 * Pi / SegmentDistance)));
     const size_t VerticesPerSegment = 4;
     const size_t IndicesPerSegment = 24;
 
@@ -344,10 +353,10 @@ osg::ref_ptr<osg::Node> CSVRender::Object::makeRotateMarker (int axis)
         float outerX = OuterRadius * std::cos(i * Angle);
         float outerY = OuterRadius * std::sin(i * Angle);
 
-        vertices->at(index++) = getMarkerPosition(innerX, innerY,  MarkerShaftWidth / 2, axis);
-        vertices->at(index++) = getMarkerPosition(innerX, innerY, -MarkerShaftWidth / 2, axis);
-        vertices->at(index++) = getMarkerPosition(outerX, outerY,  MarkerShaftWidth / 2, axis);
-        vertices->at(index++) = getMarkerPosition(outerX, outerY, -MarkerShaftWidth / 2, axis);
+        vertices->at(index++) = getMarkerPosition(innerX, innerY,  Width / 2, axis);
+        vertices->at(index++) = getMarkerPosition(innerX, innerY, -Width / 2, axis);
+        vertices->at(index++) = getMarkerPosition(outerX, outerY,  Width / 2, axis);
+        vertices->at(index++) = getMarkerPosition(outerX, outerY, -Width / 2, axis);
     }
 
     colors->at(0) = osg::Vec4f (axis==0 ? 1.0f : 0.2f, axis==1 ? 1.0f : 0.2f, axis==2 ? 1.0f : 0.2f, 1.0f);
