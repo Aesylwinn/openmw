@@ -1,4 +1,8 @@
+cmake_minimum_required (VERSION 3.1)
+
 project(OpenMW)
+
+set (CMAKE_CXX_STANDARD 11)
 
 # If the user doesn't supply a CMAKE_BUILD_TYPE via command line, choose one for them.
 IF(NOT CMAKE_BUILD_TYPE)
@@ -24,8 +28,8 @@ endif()
 # Version
 message(STATUS "Configuring OpenMW...")
 
-set(OPENMW_VERSION_MAJOR 0)
-set(OPENMW_VERSION_MINOR 40)
+set(OPENMW_VERSION_MAJOR 2)
+set(OPENMW_VERSION_MINOR 0)
 set(OPENMW_VERSION_RELEASE 0)
 
 set(OPENMW_VERSION_COMMITHASH "")
@@ -46,7 +50,7 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/.git)
     else(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/shallow)
         message(STATUS "Shallow Git clone detected, not attempting to retrieve version info")
     endif(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/shallow)
-endif(EXISTS ${PROJECT_SOURCE_DIR}/.git)	
+endif(EXISTS ${PROJECT_SOURCE_DIR}/.git)
 
 # Macros
 include(OpenMWMacros)
@@ -65,6 +69,8 @@ option(OPENMW_UNITY_BUILD "Use fewer compilation units to speed up compile time"
 
 # Apps and tools
 option(BUILD_OPENMW "build OpenMW" ON)
+option(BUILD_CLIENT "build Client" ON)
+option(BUILD_SERVER "bulid Server" ON)
 option(BUILD_BSATOOL "build BSA extractor" ON)
 option(BUILD_ESMTOOL "build ESM inspector" ON)
 option(BUILD_LAUNCHER "build Launcher" ON)
@@ -146,17 +152,6 @@ if (USE_QT)
     # Instruct CMake to run moc automatically when needed.
     #set(CMAKE_AUTOMOC ON)
     endif()
-endif()
-
-if (APPLE)
-    # OS X build process relies on this fix: https://github.com/Kitware/CMake/commit/3df5147043d83aa09acd5c9ce31d5c602efb99db
-    cmake_minimum_required(VERSION 3.1.0)
-elseif (USE_QT AND DESIRED_QT_VERSION MATCHES 5)
-    # 2.8.11+ is required to make Qt5 happy and allow linking QtMain on Windows.
-    cmake_minimum_required(VERSION 2.8.11)
-else()
-    # We probably support older versions than this.
-    cmake_minimum_required(VERSION 2.6)
 endif()
 
 # Sound setup
@@ -342,7 +337,7 @@ endif()
 
 # CXX Compiler settings
 if (CMAKE_CXX_COMPILER_ID STREQUAL GNU OR CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wno-unused-parameter -std=c++98 -pedantic -Wno-long-long")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wno-unused-parameter -pedantic -Wno-long-long")
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL Clang AND NOT APPLE)
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.6 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 3.6)
@@ -535,6 +530,14 @@ add_subdirectory (components)
 # Apps and tools
 if (BUILD_OPENMW)
     add_subdirectory( apps/openmw )
+endif()
+
+if (BUILD_CLIENT)
+    add_subdirectory( apps/client )
+endif()
+
+if (BUILD_SERVER)
+    add_subdirectory( apps/server )
 endif()
 
 if (BUILD_BSATOOL)
