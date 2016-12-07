@@ -69,7 +69,7 @@ InputWrapper::InputWrapper(SDL_Window* window, osg::ref_ptr<osgViewer::Viewer> v
                     {
                         // If in relative mode, don't trigger events unless window has focus
                         if (!mWantRelative || mWindowHasFocus)
-                            mMouseListener->mouseMoved(_packageMouseMotion(evt));
+                            if (mMouseListener) mMouseListener->mouseMoved(_packageMouseMotion(evt));
 
                         // Try to keep the mouse inside the window
                         if (mWindowHasFocus)
@@ -77,17 +77,17 @@ InputWrapper::InputWrapper(SDL_Window* window, osg::ref_ptr<osgViewer::Viewer> v
                     }
                     break;
                 case SDL_MOUSEWHEEL:
-                    mMouseListener->mouseMoved(_packageMouseMotion(evt));
+                    if (mMouseListener) mMouseListener->mouseMoved(_packageMouseMotion(evt));
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    mMouseListener->mousePressed(evt.button, evt.button.button);
+                    if (mMouseListener) mMouseListener->mousePressed(evt.button, evt.button.button);
                     break;
                 case SDL_MOUSEBUTTONUP:
-                    mMouseListener->mouseReleased(evt.button, evt.button.button);
+                    if (mMouseListener) mMouseListener->mouseReleased(evt.button, evt.button.button);
                     break;
                 case SDL_KEYDOWN:
                     if (!evt.key.repeat)
-                        mKeyboardListener->keyPressed(evt.key);
+                        if (mKeyboardListener) mKeyboardListener->keyPressed(evt.key);
 
                     // temporary for the stats viewer
                     if (evt.key.keysym.sym == SDLK_F3)
@@ -96,7 +96,7 @@ InputWrapper::InputWrapper(SDL_Window* window, osg::ref_ptr<osgViewer::Viewer> v
                     break;
                 case SDL_KEYUP:
                     if (!evt.key.repeat)
-                        mKeyboardListener->keyReleased(evt.key);
+                        if (mKeyboardListener) mKeyboardListener->keyReleased(evt.key);
 
                     // temporary for the stats viewer
                     if (evt.key.keysym.sym == SDLK_F3)
@@ -104,7 +104,7 @@ InputWrapper::InputWrapper(SDL_Window* window, osg::ref_ptr<osgViewer::Viewer> v
 
                     break;
                 case SDL_TEXTINPUT:
-                    mKeyboardListener->textInput(evt.text);
+                    if (mKeyboardListener) mKeyboardListener->textInput(evt.text);
                     break;
                 case SDL_JOYHATMOTION: //As we manage everything with GameController, don't even bother with these.
                 case SDL_JOYAXISMOTION:
@@ -139,6 +139,7 @@ InputWrapper::InputWrapper(SDL_Window* window, osg::ref_ptr<osgViewer::Viewer> v
                 case SDL_QUIT:
                     if (mWindowListener)
                         mWindowListener->windowClosed();
+                    mViewer->setDone(true);
                     break;
                 case SDL_CLIPBOARDUPDATE:
                     break; // We don't need this event, clipboard is retrieved on demand

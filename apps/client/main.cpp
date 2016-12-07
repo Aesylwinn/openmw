@@ -16,6 +16,11 @@ int main(int argc, char* argv[])
 
     client.init(clientOptions);
 
+    while (!client.shouldShutdown())
+    {
+        client.update();
+    }
+
     client.cleanup();
 
     Misc::Log::destroy();

@@ -7,15 +7,14 @@ namespace MWClient
         mWindowTitle = "MW Client";
 
         mDisplayMode = DM_StandardWindow;
-
-        mDisplayCount = 1;
-        mDisplayPosXs.push_back(100);
-        mDisplayPosYs.push_back(100);
-        mDisplayWidths.push_back(640);
-        mDisplayHeights.push_back(480);
+        mDisplayPosX = 100;
+        mDisplayPosY = 100;
+        mDisplayWidth = 640;
+        mDisplayHeight = 480;
 
         mVSync = 1;
         mDoubleBuffer = 1;
+        mAntialiasing = 0;
 
         mRedBits = 8;
         mGreenBits = 8;
@@ -24,6 +23,8 @@ namespace MWClient
 
         mStencilBits = 8;
         mDepthBits = 24;
+
+        mMinimizeOnFocusLoss = 0;
     }
 
     ClientOptions::ClientOptions(std::istream& stream)
@@ -31,68 +32,83 @@ namespace MWClient
         // TODO: load from file
     }
 
-    const std::string& ClientOptions::getWindowTitle()
+    const std::string& ClientOptions::getWindowTitle() const
     {
         return mWindowTitle;
     }
 
-    int ClientOptions::getDisplayMode()
+    int ClientOptions::getDisplayMode() const
     {
         return mDisplayMode;
     }
 
-    int ClientOptions::getDisplayCount()
+    int ClientOptions::getDisplayPositionX() const
     {
-        return mDisplayCount;
+        return mDisplayPosX;
     }
 
-    int ClientOptions::getDisplayPositionX(int display)
+    int ClientOptions::getDisplayPositionY() const
     {
-        return mDisplayPosXs[display];
+        return mDisplayPosY;
     }
 
-    int ClientOptions::getDisplayPositionY(int display)
+    int ClientOptions::getDisplayWidth() const
     {
-        return mDisplayPosYs[display];
+        return mDisplayWidth;
     }
 
-    int ClientOptions::getVSync()
+    int ClientOptions::getDisplayHeight() const
+    {
+        return mDisplayHeight;
+    }
+
+    int ClientOptions::getVSync() const
     {
         return mVSync;
     }
 
-    int ClientOptions::getDoubleBuffer()
+    int ClientOptions::getDoubleBuffer() const
     {
         return mDoubleBuffer;
     }
 
-    int ClientOptions::getRedBits()
+    int ClientOptions::getAntialiasing() const
+    {
+        return mAntialiasing;
+    }
+
+    int ClientOptions::getRedBits() const
     {
         return mRedBits;
     }
 
-    int ClientOptions::getGreenBits()
+    int ClientOptions::getGreenBits() const
     {
         return mGreenBits;
     }
 
-    int ClientOptions::getBlueBits()
+    int ClientOptions::getBlueBits() const
     {
         return mBlueBits;
     }
 
-    int ClientOptions::getAlphaBits()
+    int ClientOptions::getAlphaBits() const
     {
         return mAlphaBits;
     }
 
-    int ClientOptions::getStencilBits()
+    int ClientOptions::getStencilBits() const
     {
         return mStencilBits;
     }
 
-    int ClientOptions::getDepthBits()
+    int ClientOptions::getDepthBits() const
     {
         return mDepthBits;
+    }
+
+    int ClientOptions::getMinimizeOnFocusLoss() const
+    {
+        return mMinimizeOnFocusLoss;
     }
 }

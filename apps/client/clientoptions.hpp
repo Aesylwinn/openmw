@@ -14,7 +14,7 @@ namespace MWClient
             {
                 DM_None             =  -1,
                 DM_StandardWindow   =   0,
-                DM_FullscreenWindow =   1,
+                DM_FullScreenWindow =   1,
                 DM_BorderlessWindow =   2
             };
 
@@ -24,41 +24,41 @@ namespace MWClient
             // Loads from a file
             ClientOptions(std::istream& stream);
 
-            const std::string& getWindowTitle();
+            const std::string& getWindowTitle() const;
 
-            int getDisplayMode();
+            int getDisplayMode() const;
+            int getDisplayPositionX() const;
+            int getDisplayPositionY() const;
+            int getDisplayWidth() const;
+            int getDisplayHeight() const;
 
-            int getDisplayCount();
-            int getDisplayPositionX(int display);
-            int getDisplayPositionY(int display);
-            int getDisplayWidth(int display);
-            int getDisplayHeight(int display);
+            int getVSync() const;
+            int getDoubleBuffer() const;
+            int getAntialiasing() const;
 
-            int getVSync();
-            int getDoubleBuffer();
+            int getRedBits() const;
+            int getGreenBits() const;
+            int getBlueBits() const;
+            int getAlphaBits() const;
 
-            int getRedBits();
-            int getGreenBits();
-            int getBlueBits();
-            int getAlphaBits();
+            int getStencilBits() const;
+            int getDepthBits() const;
 
-            int getStencilBits();
-            int getDepthBits();
+            int getMinimizeOnFocusLoss() const;
 
         private:
 
             std::string mWindowTitle;
 
             int mDisplayMode;
-
-            int mDisplayCount;
-            std::vector<int> mDisplayPosXs;
-            std::vector<int> mDisplayPosYs;
-            std::vector<int> mDisplayWidths;
-            std::vector<int> mDisplayHeights;
+            int mDisplayPosX;
+            int mDisplayPosY;
+            int mDisplayWidth;
+            int mDisplayHeight;
 
             int mVSync;
             int mDoubleBuffer;
+            int mAntialiasing;
 
             int mRedBits;
             int mGreenBits;
@@ -67,6 +67,8 @@ namespace MWClient
 
             int mStencilBits;
             int mDepthBits;
+
+            int mMinimizeOnFocusLoss;
     };
 }
 

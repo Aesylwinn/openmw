@@ -1,12 +1,24 @@
 #ifndef OPENMW_CLIENT_CLIENT_H
 #define OPENMW_CLIENT_CLIENT_H
 
+#include <osg/ref_ptr>
+
+#include <components/sdlutil/sdlinputwrapper.hpp>
+
 #include <memory>
+#include <vector>
 
 namespace MWServer
 {
     class Server;
 }
+
+namespace osgViewer
+{
+    class Viewer;
+}
+
+class SDL_Window;
 
 namespace MWClient
 {
@@ -32,8 +44,19 @@ namespace MWClient
             /// Establishes and maintains a connection to the server
             void connect(std::shared_ptr<MWServer::Server> server);
 
+            bool shouldShutdown();
+
         private:
 
+            void checkSDLError(int code);
+            void checkSDLError(int code, const char* throwMessage);
+
+            bool mClosed;
+
+            SDL_Window* mWindow;
+
+            osg::ref_ptr<osgViewer::Viewer> mViewer;
+            std::shared_ptr<SDLUtil::InputWrapper> mInputWrapper;
             std::shared_ptr<MWServer::Server> mServer;
     };
 }

@@ -12,6 +12,8 @@ add_executable (openmw-client
 )
 
 target_link_libraries (openmw-client
+    ${OSG_LIBRARIES}
+    ${OSGVIEWER_LIBRARIES}
     ${SDL2_LIBRARY}
     components
 )
