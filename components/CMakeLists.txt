@@ -85,7 +85,7 @@ add_component_dir (esmterrain
     )
 
 add_component_dir (misc
-    utf8stream stringops resourcehelpers rng messageformatparser log
+    utf8stream stringops resourcehelpers rng messageformatparser log osglog
     )
 
 IF(NOT WIN32 AND NOT APPLE)
@@ -134,7 +134,7 @@ add_component_dir (fontloader
     )
 
 add_component_dir (sdlutil
-    sdlgraphicswindow imagetosurface sdlinputwrapper sdlvideowrapper OISCompat events sdlcursormanager
+    sdlgraphicswindow imagetosurface sdlinputwrapper sdlvideowrapper sdleventlisteners sdlcursormanager
     )
 
 add_component_dir (version

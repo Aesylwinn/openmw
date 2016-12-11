@@ -2,6 +2,7 @@
 client_units (.
     client
     clientoptions
+    eventlisteners
 )
 
 #set (CLIENT_SRC client.cpp)

@@ -14,8 +14,7 @@
 namespace MWClient
 {
     Client::Client()
-        : mClosed(true)
-        , mWindow(nullptr)
+        : mWindow(nullptr)
     {
     }
 
@@ -25,8 +24,6 @@ namespace MWClient
 
     void Client::init(const ClientOptions& options)
     {
-        mClosed = false;
-
         // SDL
         {
             Misc::Log::get().writeStatusInfo("Client", "Initialising SDL");
@@ -161,10 +158,10 @@ namespace MWClient
             traits->vsync = vsync;
             traits->doubleBuffer = doubleBuffer;
 
-            traits->inheritedWindowData = new SDLUtil::GraphicsWindowSDL2::WindowData(mWindow);
+            traits->inheritedWindowData = new SDLUtil::SDLGraphicsWindow::WindowData(mWindow);
 
-            // Create a new gl context for OSG
-            osg::ref_ptr<SDLUtil::GraphicsWindowSDL2> graphicsWindow = new SDLUtil::GraphicsWindowSDL2(traits);
+            // Set up a gl context for OSG
+            osg::ref_ptr<SDLUtil::SDLGraphicsWindow> graphicsWindow = new SDLUtil::SDLGraphicsWindow(traits);
             if (!graphicsWindow->valid())
             {
                 Misc::Log::get().writeError("OSG", "Failed to create graphics context");
@@ -181,28 +178,39 @@ namespace MWClient
             mViewer->realize();
 
             // temp
-            mInputWrapper = std::shared_ptr<SDLUtil::InputWrapper>(new SDLUtil::InputWrapper(mWindow, mViewer, false));
+            mInputWrapper = std::shared_ptr<SDLUtil::InputWrapper>(new SDLUtil::InputWrapper(mWindow, false));
+
+            mWindowState = std::shared_ptr<WindowState>(new WindowState());
+            mInputWrapper->setWindowEventCallback(mWindowState.get());
         }
     }
 
     void Client::update()
     {
-        if (!mViewer->done())
+        mViewer->frame();
+
+        mWindowState->reset();
+        mInputWrapper->capture(false);
+
+        if (mWindowState->wasResized())
         {
-            mViewer->frame();
-            mInputWrapper->capture(false);
-        }
-        else
-        {
-            mClosed = true;
+            int x, y, w, h;
+            SDL_GetWindowPosition(mWindow, &x, &y);
+            SDL_GetWindowSize(mWindow, &w, &h);
+            mViewer->getCamera()->getGraphicsContext()->resized(x, y, w, h);
+            mViewer->getEventQueue()->windowResize(x, y, w, h);
         }
     }
 
     void Client::cleanup()
     {
         mInputWrapper.reset();
+        mWindowState.reset();
+
+        mViewer->setDone(true);
         mViewer = 0;
 
+        SDL_DestroyWindow(mWindow);
         SDL_Quit();
     }
 
@@ -212,7 +220,7 @@ namespace MWClient
 
     bool Client::shouldShutdown()
     {
-        return mClosed;
+        return mWindowState->wasClosed() || mWindowState->wasQuit();
     }
 
     void Client::checkSDLError(int code)

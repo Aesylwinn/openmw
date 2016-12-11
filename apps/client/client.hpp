@@ -1,9 +1,11 @@
 #ifndef OPENMW_CLIENT_CLIENT_H
 #define OPENMW_CLIENT_CLIENT_H
 
-#include <osg/ref_ptr>
+#include "eventlisteners.hpp"
 
 #include <components/sdlutil/sdlinputwrapper.hpp>
+
+#include <osg/ref_ptr>
 
 #include <memory>
 #include <vector>
@@ -51,12 +53,13 @@ namespace MWClient
             void checkSDLError(int code);
             void checkSDLError(int code, const char* throwMessage);
 
-            bool mClosed;
-
             SDL_Window* mWindow;
 
             osg::ref_ptr<osgViewer::Viewer> mViewer;
+
             std::shared_ptr<SDLUtil::InputWrapper> mInputWrapper;
+            std::shared_ptr<WindowState> mWindowState;
+
             std::shared_ptr<MWServer::Server> mServer;
     };
 }
