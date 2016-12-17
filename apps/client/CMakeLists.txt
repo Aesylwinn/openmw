@@ -1,21 +1,9 @@
 
-client_units (.
-    client
-    clientoptions
-    eventlisteners
-)
-
-#set (CLIENT_SRC client.cpp)
-
 add_executable (openmw-client
     main.cpp
-    ${CLIENT_SRC}
 )
 
 target_link_libraries (openmw-client
-    ${OSG_LIBRARIES}
-    ${OSGVIEWER_LIBRARIES}
-    ${SDL2_LIBRARY}
     components
 )
 

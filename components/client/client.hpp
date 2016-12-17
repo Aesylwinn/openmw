@@ -1,7 +1,7 @@
-#ifndef OPENMW_CLIENT_CLIENT_H
-#define OPENMW_CLIENT_CLIENT_H
+#ifndef OPENMW_COMPONENTS_CLIENT_CLIENT_H
+#define OPENMW_COMPONENTS_CLIENT_CLIENT_H
 
-#include "eventlisteners.hpp"
+#include "clienteventlisteners.hpp"
 
 #include <components/sdlutil/sdlinputwrapper.hpp>
 

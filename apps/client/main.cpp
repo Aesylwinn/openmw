@@ -1,12 +1,10 @@
-#include "client.hpp"
-#include "clientoptions.hpp"
-
+#include <components/client/client.hpp>
+#include <components/client/clientoptions.hpp>
 #include <components/misc/log.hpp>
 #include <components/misc/osglog.hpp>
 
 #include <fstream>
 
-// TODO: eventually change this into a shared library
 int main(int argc, char* argv[])
 {
     std::ofstream logFile("client.log");

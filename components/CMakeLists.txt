@@ -144,6 +144,14 @@ add_component_dir (version
 add_component_dir (fallback
     fallback validate
     )
+    
+add_component_dir (client
+    client clientoptions clienteventlisteners
+    )
+    
+add_component_dir (server
+    server serveroptions
+    )
 
 set (ESM_UI ${CMAKE_SOURCE_DIR}/files/ui/contentselector.ui
     )
