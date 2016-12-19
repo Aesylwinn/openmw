@@ -117,10 +117,6 @@ add_component_dir (terrain
     storage world buffercache defs terraingrid material
     )
 
-add_component_dir (loadinglistener
-    loadinglistener
-    )
-
 add_component_dir (myguiplatform
     myguirendermanager myguidatamanager myguiplatform myguitexture myguiloglistener additivelayer scalinglayer
     )
