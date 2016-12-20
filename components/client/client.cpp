@@ -220,7 +220,7 @@ namespace MWClient
 
     bool Client::shouldShutdown()
     {
-        return mWindowState->wasQuit();
+        return mWindowState->wasClosed() || mWindowState->wasQuit();
     }
 
     void Client::checkSDLError(int code)
