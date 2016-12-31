@@ -253,7 +253,7 @@ find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 find_package(MyGUI 3.2.1 REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(OpenAL REQUIRED)
-find_package(Bullet 283 REQUIRED COMPONENTS BulletCollision LinearMath)
+find_package(Bullet 283 REQUIRED COMPONENTS BulletCollision BulletDynamics LinearMath)
 
 include_directories("."
     SYSTEM

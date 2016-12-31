@@ -5,6 +5,7 @@ add_executable (openmw-client
 
 target_link_libraries (openmw-client
     components
+    ${Bullet_LIBRARIES}
 )
 
 add_custom_command(TARGET openmw-client
